@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <script data-main="/js/config" src="js/libs/require-jquery.js"></script>
+    <title>Hello Bootstrap</title>
+  </head>
+  <body>
+      <h3>Project Uses Require.js, jQuery, Bootstrap, and Backbone</h3>
+      <div class="container">
+          <div class="row">
+              <div class="span4">
+                  row 1 column 1
+              </div>
+              <div class="span4">
+                  If this is in center, it means Bootstrap is running
+              </div>
+              <div class="span4">
+                  <button id="btn1" class="btn btn-primary ">Next Page</button>
+              </div>
+          </div>
+      </div>
+
+       <script type="text/template" id="template-question-single">
+          <!-- template-question-single -->
+              <div class="row-fluid">
+                  <strong> Question # {{= question.get('quesID') }}: </strong> {{- question.get('desc') }}
+              </div>
+
+              <div class="row-fluid mt3 mb2">
+                  {{ question.get('opt').forEach(function(option) { }}
+                  <label class="radio mb0_5">
+                      <input type="radio" name="options" id="{{=option.id}}" value="val">
+                          {{-option.get('desc')}}
+                  </label>
+                  {{ }); }}
+              </div>
+
+              <div class="row-fluid">
+                  <span class="span1"><button id="btn1" class="btn btn-info btn-large exam">Next</button></span>
+              </div>
+            </script>
+          <!-- /template-question-single -->
+
+          <!-- template-Result-->
+        <script type="text/template" id="template-result">
+                     <div class="row">
+                       <div class="span4">Div1</div>
+                       <div class="span8">Div2</div>
+                     </div>
+           </script>
+           <!-- /template-Result-->
+  </body>
+</html>

@@ -1,30 +1,30 @@
 define( ["backbone"], function(Backbone) {
 
+    _.templateSettings = {
+        interpolate : /\{\{=(.+?)\}\}/g,
+        //evaluate : /\{\{(.+?)\}\}/g,
+        evaluate : /\{\{([.\s\S]+?)\}\}/g,
+        escape: /\{\{-(.+?)\}\}/g
+    };
+    var questionTemplate = $('#template-question-single').html();
+    var resultTemplate = $('#template-result').html();
     var UserView = Backbone.View.extend({
         tagName: "div",
         events: {
-            "click button[id=btn1]": 'nextPage'
+            "click button[id = btn1]": 'nextPage'
+            //"click input[type = radio]":'setAnswer'
         },
 
         render: function(){
             var model= this.model;
-            var option = model.get('opt');
-            var options = option.models;
-            var optionList = "";
-            var counter = 0;
-            while(true)
-            {
-              var opt = options[counter];
-                if(opt == null)break;
-                optionList = optionList + "<li>"+(opt.get('desc'))+"</li>"+"<br>";
-                counter++;
-            }
-            this.$el.html(model.get("desc") +"<br>"+"<ul>"+optionList+"</ul>");
-            this.$el.addClass("span4");
-            this.$el.append('<div class="span4"><button id="btn1" class="btn btn-primary ">Next Page</button></div>');
+            this.$el.html( _.template( questionTemplate, {question: this.model} ));
             return this;
         },
         nextPage: function(event,sender){
+            event.preventDefault();
+            var optionSelected = this.$el.find('input:checked');//.val();//.attr('checked');
+            this.model.optionSelected(optionSelected.attr('id'));
+
             var quesId = this.model.get('quesID');
             //to solve circular dependency
             require(['routes'],function(routes){
@@ -33,8 +33,38 @@ define( ["backbone"], function(Backbone) {
                 var navigationString ='Q'+ quesId;
                 router.navigate(navigationString, {trigger: true});
             });
+        },
+
+        setAnswer:function(event,sender){
+          this.model.optionSelected(event.currentTarget.id);
         }
     });
+
+    var ResultView = Backbone.View.extend({
+        tagName : "div",
+        render : function()
+        {
+            //to solve circular dependency
+                require(['models'],function(models){
+                var questions = models.questions;
+                var counter = 0;
+                questions.forEach(function(e){
+                    var answer = e.get('isCorrect');
+                    console.log(answer);
+                    if(answer == "true")
+                    {
+                        counter = counter+1;
+                        console.log(counter);
+                    }
+                })
+
+                    alert("Total Correct Questions :"+counter);
+                    alert(resultTemplate);
+                    this.$el.html( _.template(resultTemplate),{});
+                    return this;
+            });
+        }
+    })   ;
 
     var NextPageView = Backbone.View.extend({
         events: {
@@ -58,6 +88,7 @@ define( ["backbone"], function(Backbone) {
 
     return {
         UserView: UserView,
-        NextPageView: NextPageView
+        NextPageView: NextPageView,
+        ResultView : ResultView
     };
 });
